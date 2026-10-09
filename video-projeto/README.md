@@ -1,6 +1,6 @@
 # Vídeo Kukulu Kua Mukambu — projeto de edição
 
-Estado atual: **`render/filme_v10.mp4`** (56 s, vertical 1080×1920, 30 fps).
+Estado atual: **`render/filme_v11.mp4`** (65,5 s, vertical 1080×1920, 30 fps).
 
 ## Personagens (uma apresentação cada)
 
@@ -33,10 +33,18 @@ Estado atual: **`render/filme_v10.mp4`** (56 s, vertical 1080×1920, 30 fps).
 - Fontes: Oswald Bold (nomes), Montserrat Bold (cargos/legendas) — em `fonts/`.
 - Logótipo sem fundo: `../brand/kukulu-logo@2x.png`.
 
+## v11 (som e legendas)
+
+- Só as falas ficam audíveis (corte automático fora das palavras, a partir da transcrição); conversa do quadro branco removida.
+- Limpeza de ruído, compressão e cada pessoa a −16 LUFS.
+- As falas param durante cada apresentação (2,3 s) e retomam depois. Apresentações (tempo final): Hilária 0:10,3 · Lourenço 0:22,3 · Joel 0:42,55 · Lima 1:01,03 · cartão final 1:03,3.
+- Corrigidos os cortes que comiam "solução" (Lourenço) e "vida" (Joel).
+- Legendas animadas palavra a palavra (Montserrat ExtraBold, laranja da marca, destaques a amarelo): `transcricao/legendas_v11.ass`.
+- Texto incerto não legendado: a 1.ª palavra do Joel e o meio da música do Lima ("segunda-feira… / Chefe …").
+
 ## Pendente
 
-1. **Legendas sincronizadas** (estilo da referência, laranja + destaques a amarelo): precisa de transcrição.
-   Libertar `huggingface.co`, `*.huggingface.co` e `*.hf.co` na rede do ambiente (Edit → Network access → Allowed domains).
+1. Confirmar a letra completa do Lima e a primeira palavra do Joel para completar as legendas.
 2. **Imagens de apoio (B-roll)** geradas ou de banco de imagens para ilustrar as falas (depende da transcrição para saber o que ilustrar).
 3. Transições ao estilo da referência (painéis de papel, cartões de palavra gigante) depois das legendas.
 
