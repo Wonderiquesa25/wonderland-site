@@ -1,6 +1,6 @@
 # Vídeo Kukulu Kua Mukambu — projeto de edição
 
-Estado atual: **`render/filme_v11.mp4`** (65,5 s, vertical 1080×1920, 30 fps).
+Estado atual: **`render/filme_v12.mp4`** (65,5 s, vertical 1080×1920, 30 fps). País: **Angola**.
 
 ## Personagens (uma apresentação cada)
 
@@ -41,6 +41,15 @@ Estado atual: **`render/filme_v11.mp4`** (65,5 s, vertical 1080×1920, 30 fps).
 - Corrigidos os cortes que comiam "solução" (Lourenço) e "vida" (Joel).
 - Legendas animadas palavra a palavra (Montserrat ExtraBold, laranja da marca, destaques a amarelo): `transcricao/legendas_v11.ass`.
 - Texto incerto não legendado: a 1.ª palavra do Joel e o meio da música do Lima ("segunda-feira… / Chefe …").
+
+## v12 (imagens, foley, legendas)
+
+- 6 imagens geradas no Canva (Angola, técnicos angolanos) em `imagens-canva/`, design Canva `DAHXhgKjAw0`:
+  planeamento ("planearmos"), residência ("residências, casas"), loja ("estabelecimentos"), vigilância ("proteger os clientes"),
+  consulta ("a sua problemática"), monitorização ("a solução").
+- Efeitos sonoros das ações criados de raiz (`scripts/foley.py`): porta, pés da Hilária, cadeira, teclado, Lourenço a sentar-se,
+  passos do Lima, saco, fita métrica a sair e a recolher.
+- Legendas: texto principal amarelo da marca; ganchos em branco, maiores, com animação de crescer/encolher (`transcricao/legendas_v12.ass`).
 
 ## Pendente
 
