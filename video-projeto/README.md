@@ -1,6 +1,6 @@
 # Vídeo Kukulu Kua Mukambu — projeto de edição
 
-Estado atual: **`render/filme_v12.mp4`** (65,5 s, vertical 1080×1920, 30 fps). País: **Angola**.
+Estado atual: **`render/filme_v13.mp4`** (65,5 s, vertical 1080×1920, 30 fps). País: **Angola**.
 
 ## Personagens (uma apresentação cada)
 
@@ -50,6 +50,16 @@ Estado atual: **`render/filme_v12.mp4`** (65,5 s, vertical 1080×1920, 30 fps). 
 - Efeitos sonoros das ações criados de raiz (`scripts/foley.py`): porta, pés da Hilária, cadeira, teclado, Lourenço a sentar-se,
   passos do Lima, saco, fita métrica a sair e a recolher.
 - Legendas: texto principal amarelo da marca; ganchos em branco, maiores, com animação de crescer/encolher (`transcricao/legendas_v12.ass`).
+
+## v13 (refinamento final)
+
+- Espaços provisórios removidos: reação da Hilária no meio de "a melhor solução", restos do colete/quadro/Joel-teaser e a cena do quadro branco
+  (substituída por instalação da câmara + cliente a ver no telemóvel, para "as ideias ganham vida").
+- Novas imagens Canva: equipa angolana ("nós estamos no campo"), instalação, telemóvel.
+- Música original afro-house/amapiano 120 BPM criada de raiz (`musica/`, `scripts/music.py`), com ducking automático sob as vozes.
+- Transições: entradas com zoom, deslize moradia→loja, zoom equipa→câmara, whip para a instalação, tremor no corte para o Joel.
+- Legendas maiores (100/140 px) com 4 animações diferentes; ganchos brancos com salto.
+- Texto atrás da pessoa (recorte quadro a quadro): "A MELHOR SOLUÇÃO" (Lourenço) e "MEDIMOS / MONTAMOS / AJUSTAMOS" (Lima).
 
 ## Pendente
 
