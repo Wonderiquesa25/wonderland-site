@@ -1,6 +1,6 @@
 # Vídeo Kukulu Kua Mukambu — projeto de edição
 
-Estado atual: **`render/filme_v13.mp4`** (65,5 s, vertical 1080×1920, 30 fps). País: **Angola**.
+Estado atual: **`render/filme_v14_4K.mp4`** (64,8 s, vertical 4K 2160×3840, 30 fps, ~11 Mbps) e `render/filme_v14_1080p.mp4` (cópia leve). País: **Angola**.
 
 ## Personagens (uma apresentação cada)
 
@@ -60,6 +60,15 @@ Estado atual: **`render/filme_v13.mp4`** (65,5 s, vertical 1080×1920, 30 fps). 
 - Transições: entradas com zoom, deslize moradia→loja, zoom equipa→câmara, whip para a instalação, tremor no corte para o Joel.
 - Legendas maiores (100/140 px) com 4 animações diferentes; ganchos brancos com salto.
 - Texto atrás da pessoa (recorte quadro a quadro): "A MELHOR SOLUÇÃO" (Lourenço) e "MEDIMOS / MONTAMOS / AJUSTAMOS" (Lima).
+
+## v14 (master 4K)
+
+- Removido o "casas" (Lourenço): "nas suas residências e estabelecimentos" (corte escondido na transição moradia→loja).
+- Música eletrónica original 128 BPM (`musica/musica_eletronica_128bpm.wav`), drop no corte para o Joel, ducking sob as vozes, mistura a −14 LUFS.
+- Legendas maiores (122/165 px), animações variadas; "A MELHOR SOLUÇÃO" reposicionado para ficar legível.
+- Impulsos de zoom nos ganchos, cartão final animado (brilho + reflexo de luz).
+- Tratamento de luz/profundidade: pessoa recortada, mais luz e nitidez; fundo ligeiramente mais escuro e desfocado; redução de ruído.
+- Exportado em 2160×3840 (upscale de alta qualidade; as gravações originais têm ~480 px de largura).
 
 ## Pendente
 
