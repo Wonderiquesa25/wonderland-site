@@ -6,10 +6,10 @@ Estado atual: **`render/filme_v11.mp4`** (65,5 s, vertical 1080×1920, 30 fps).
 
 | Personagem | Nome no ecrã | Cargo | Apresentação (tempo no filme) |
 |---|---|---|---|
-| Homem que entra pela porta | Lourenço Sebastião | CEO | 0:11,0 – 0:13,3 |
-| Jovem com os pés na mesa | Hilária Mukango | Secretária | 0:03,4 – 0:05,7 |
-| De capacete, sentado | Joel Simão | Técnico de Segurança Electrónica | 0:37,5 – 0:39,75 |
-| Ao lado do Joel no quadro / no fim a cantar | Lima | Técnico de Segurança Electrónica | 0:51,9 – 0:54,07 (congelado no fim) |
+| Homem que entra pela porta | Lourenço Sebastião | CEO | 0:22,3 – 0:24,6 |
+| Jovem com os pés na mesa | Hilária Mukango | Secretária | 0:10,3 – 0:12,6 |
+| De capacete, sentado | Joel Simão | Técnico de Segurança Electrónica | 0:42,55 – 0:44,85 |
+| Ao lado do Joel no quadro / no fim a cantar | Lima | Técnico de Segurança Electrónica | 1:01,03 – 1:03,33 (congelado no fim) |
 
 ## Ordem do filme (v10)
 
