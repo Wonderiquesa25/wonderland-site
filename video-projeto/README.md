@@ -8,17 +8,17 @@ Estado atual: **`render/filme_v14_4K.mp4`** (64,8 s, vertical 4K 2160×3840, 30 
 |---|---|---|---|
 | Homem que entra pela porta | Lourenço Sebastião | CEO | 0:22,3 – 0:24,6 |
 | Jovem com os pés na mesa | Hilária Mukango | Secretária | 0:10,3 – 0:12,6 |
-| De capacete, sentado | Joel Simão | Técnico de Segurança Electrónica | 0:42,55 – 0:44,85 |
-| Ao lado do Joel no quadro / no fim a cantar | Lima | Técnico de Segurança Electrónica | 1:01,03 – 1:03,33 (congelado no fim) |
+| De capacete, sentado | Joel Simão | Técnico de Segurança Electrónica | 0:41,83 – 0:44,13 |
+| Ao lado do Joel no quadro / no fim a cantar | Lima | Técnico de Segurança Electrónica | 1:00,31 – 1:02,61 (congelado no fim) |
 
-## Ordem do filme (v10)
+## Ordem do filme (v14)
 
-1. 0:00 Lourenço entra pela porta → 0:00,8 Hilária com os pés na mesa → fala dela
-2. 0:10,8 – 0:37,0 fala do Lourenço (punch-ins + inserts: reação da Hilária, logótipo no colete, quadro branco, Joel de capacete)
-3. 0:37,0 corte seco com impacto → Joel Simão
-4. 0:39,97 whip pan → Lima + Joel no quadro branco
-5. 0:43,17 → Lima (fita métrica, termina congelado na apresentação)
-6. 0:54,07 corte para preto → cartão com o logótipo (2,2 s)
+1. 0:00 Lourenço entra pela porta → Hilária com os pés na mesa → fala dela → 0:10,3 apresentação da Hilária
+2. Fala do Lourenço com imagens de apoio (planeamento, moradia→loja, equipa→vigilância, consulta, monitorização); 0:22,3 apresentação do Lourenço
+3. 0:41,48 corte com impacto e drop da música → Joel Simão (apresentação 0:41,83)
+4. Instalação da câmara → cliente no telemóvel ("as ideias ganham vida")
+5. Lima com a fita métrica ("MEDIMOS / MONTAMOS / AJUSTAMOS"), a cantar e congelado na apresentação (1:00,31)
+6. 1:02,6 cartão final animado com o logótipo (2,2 s) — total 64,8 s
 
 ## Look (cor)
 
@@ -73,8 +73,7 @@ Estado atual: **`render/filme_v14_4K.mp4`** (64,8 s, vertical 4K 2160×3840, 30 
 ## Pendente
 
 1. Confirmar a letra completa do Lima e a primeira palavra do Joel para completar as legendas.
-2. **Imagens de apoio (B-roll)** geradas ou de banco de imagens para ilustrar as falas (depende da transcrição para saber o que ilustrar).
-3. Transições ao estilo da referência (painéis de papel, cartões de palavra gigante) depois das legendas.
+2. (Opcional) Trocar os efeitos sonoros sintetizados por gravações reais.
 
 ## Scripts
 
