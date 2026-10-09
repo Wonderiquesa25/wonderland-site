@@ -1,6 +1,10 @@
 # Vídeo Kukulu Kua Mukambu — projeto de edição
 
-Estado atual: **`render/filme_v14_4K.mp4`** (64,8 s, vertical 4K 2160×3840, 30 fps, ~11 Mbps) e `render/filme_v14_1080p.mp4` (cópia leve). País: **Angola**.
+Estrutura: **Cena 1** (início, por fazer) → **Cena 2 = parte final (aprovada, v14)**.
+
+Cena 2 (final): **`render/cena2_final_4K.mp4`** (64,8 s, vertical 4K 2160×3840, 30 fps, ~11 Mbps) e `render/cena2_final_1080p.mp4` (cópia leve). País: **Angola**.
+
+Nota para a Cena 1: as quatro personagens já são apresentadas na Cena 2 (uma vez cada) — na Cena 1 não repetir apresentações; manter o mesmo look, fontes, cores de legenda e estilo de música para a junção ficar contínua.
 
 ## Personagens (uma apresentação cada)
 
