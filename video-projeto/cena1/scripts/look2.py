@@ -3,6 +3,7 @@ import numpy as np, cv2, onnxruntime as ort
 
 M = "/tmp/claude-0/-home-user-wonderland-site/50f38ae3-2900-5f56-9ef8-a960ab790e38/scratchpad/models"
 W, H = 576, 1024          # graded at source resolution, upscaled afterwards
+RETOUCH = 0.45            # light: CodeFormer restores the face afterwards
 
 
 class Matte:
@@ -68,7 +69,7 @@ def grade(fgr, pha, box, s):
         smooth = cv2.bilateralFilter(u8, 0, 22, 4).astype(np.float32)
         tex = t - cv2.GaussianBlur(t, (0, 0), 0.8)
         retouched = smooth + tex * 0.35
-        k = (face * 0.85)[..., None]
+        k = (face * RETOUCH)[..., None]
         t = t * (1 - k) + retouched * k
         # key light on the face: lift shadows on skin, gentle glow; body falls off into darkness
         lift = 255 * ((np.clip(t, 0, 255) / 255) ** 0.82)
