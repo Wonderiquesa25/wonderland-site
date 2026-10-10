@@ -2,12 +2,13 @@
 
 Ordem: `nova1` → `nova2` → `nova3` → `nova4` (originais em `fontes/`). Só se junta à Cena 2 (parte final) quando tudo estiver ajustado.
 
-## Feito (passo "estúdio")
+## Feito (v2 "estúdio", substitui a v1)
 
 - Estabilização (vidstab, smoothing 25).
-- Fundo trocado por escuro de estúdio: pessoa recortada quadro a quadro (rembg u2net_human_seg, suavização temporal só quando parado,
-  limpeza da parede clara à volta da cabeça); fundo carvão com um vestígio desfocado da sala e brilho quente laranja atrás da cabeça.
-- Luz: pretos recuperados, altas luzes da camisa comprimidas, luz principal no rosto vinda da esquerda com queda para a direita e para baixo,
-  luz de recorte suave nas bordas, vinheta, grão leve. Look em `scripts/look.py`.
-- Áudio: passa-altos 85 Hz, redução de ruído, menos "lama" (280 Hz), mais presença (3,2 kHz), de-esser, compressão, −16 LUFS.
-- Saída vertical 1080×1920, 30 fps: `estudio/novaN_estudio.mp4` (1:45,8 no total). Versões para o repositório comprimidas (~4,5 Mbps); os masters sem compressão ficam na pasta de trabalho da sessão.
+- **Fundo preto total**: recorte com Robust Video Matting (modelo de vídeo, estável quadro a quadro, sem halo nem buracos;
+  usa a cor de primeiro plano do modelo para não trazer a parede branca para as bordas).
+- **Filtros no rosto** (deteção de rosto YuNet, seguida no tempo): retoque de pele por separação de frequências (suaviza, mantém 35% da textura),
+  luz principal no rosto com sombras levantadas e cor de pele mais rica e quente; o corpo cai para a sombra (luz de estúdio).
+- Tirada a "névoa" leitosa da gravação (pontos de preto/branco esticados com pé suave), contraste e cor; luz de recorte quente no topo da cabeça.
+- Áudio: mono limpo (passa-altos, redução de ruído, EQ de clareza, de-esser, compressão, −16 LUFS) copiado para os dois canais.
+- Gradação feita na resolução original e ampliada para 1080×1920 com nitidez leve. Scripts em `scripts/look2.py` e `scripts/process2.py`.
