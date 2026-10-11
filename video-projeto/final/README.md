@@ -1,6 +1,8 @@
 # Kukulu Kua Mukambu — filme final
 
-**Versão actual: v4** — v3 + corte do "É" sem legenda antes de "Muitos dizem" (A2 32,03–32,43 s, `cut_e.py`) e voz da cena 1 assustadora (`voice4b.py`: −3 semitons, sub-voz uma oitava abaixo, rosnar leve, saturação, brilho metálico, sala escura curta; sincronia de lábios mantida). Música reajustada ao corte (`music_s1_v4.py`), mistura `mix_v4.py`. Ficheiro: `render/kukulu_v4_1080p.mp4`.
+**Versão actual: v5** — v4 com a voz da cena 1 sem som metálico: só grossa e assustadora (`voice5.py`: −3 semitons, sub-voz uma oitava abaixo, saturação quente, topo escuro). Mistura `mix_v5.py`. Ficheiro: `render/kukulu_v5_1080p.mp4`.
+
+**v4** — v3 + corte do "É" sem legenda antes de "Muitos dizem" (A2 32,03–32,43 s, `cut_e.py`) e voz da cena 1 assustadora (`voice4b.py`: −3 semitons, sub-voz uma oitava abaixo, rosnar leve, saturação, brilho metálico, sala escura curta; sincronia de lábios mantida). Música reajustada ao corte (`music_s1_v4.py`), mistura `mix_v4.py`. Ficheiro: `render/kukulu_v4_1080p.mp4`.
 
 **v3** — igual à v2 excepto o áudio da cena 1: voz estilo YouTuber (`voice3.py`: denoise+gate, corpo, harmónicos 4–9 kHz sintetizados, brilho metálico subtil, compressão forte) e música original suspense→drama (`music_s1.py`, Ré menor 90 BPM, desvanece dentro da transição CCTV), efeitos −22 dB sob a fala (`mix_v3.py`). Ficheiro: `render/kukulu_v3_1080p.mp4`.
 
