@@ -1,5 +1,9 @@
 # Kukulu Kua Mukambu — filme final
 
+**Versão actual: sem música de fundo** (pedido do cliente) — só voz + efeitos sonoros, efeitos +3 dB
+(recuam 3 dB quando há fala), impacto grave no final. Mistura: `scripts/mix_sem_musica.py`.
+A versão com música (`scripts/mix_final.py`) fica como referência.
+
 `../render/kukulu_filme_final_1080p.mp4` — 1080×1920, 30 fps, 2:27 (parte inicial HUD + cena 2).
 
 ## Pós-produção
