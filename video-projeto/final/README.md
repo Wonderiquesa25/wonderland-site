@@ -1,10 +1,16 @@
 # Kukulu Kua Mukambu — filme final
 
-**Versão actual: sem música de fundo** (pedido do cliente) — só voz + efeitos sonoros, efeitos +3 dB
-(recuam 3 dB quando há fala), impacto grave no final. Mistura: `scripts/mix_sem_musica.py`.
-A versão com música (`scripts/mix_final.py`) fica como referência.
-
-`../render/kukulu_filme_final_1080p.mp4` — 1080×1920, 30 fps, 2:27 (parte inicial HUD + cena 2).
+**Versão actual: v2** (2:23, sem música) — `scripts/v2/`:
+- Transição nova **central de monitorização CCTV** (`cctv.py`): a parte 1 vira o feed CAM 01, a câmara recua para a parede de
+  monitores da Kukulu (CAM 03/04 = obras reais de cerca eléctrica), o cursor laranja selecciona CAM 02 e a câmara entra na cena 2.
+  Desfoque de movimento real (8 sub-frames), som: REC, zumbido da sala, glitch, whoosh, clique, estática, ligação, impacto.
+- Voz sem eco: dereverberação WPE (`dereverb.py`) + supressão espectral da reverberação tardia (`dereverb_ss.py`) no áudio bruto
+  (`dialogue6.py`); a MESMA cadeia aplicada ao Lourenço na cena 2 e igualada à parte 1 (±2 dB até 4 kHz) e ao mesmo nível (`voice2.py`).
+- Removidos os restos do "O que?" antes de "Muitos dizem" e duas pausas reais; parte 1 a 1,09×, cena 2 a 1,06× (`assemble_a.py`).
+- Nomes e cargos **digitados** letra a letra com cursor e som de tecla mecânica por letra (`intro_typed.py`, `mix_v2.py`).
+- Mistura: voz por cima; efeitos +1 dB nas pausas e −7 dB quando há fala; −13,9 LUFS, pico −1,4 dBFS.
+- Limitações: a gravação da parte 1 não tem agudos acima de ~4 kHz (a cena 2 foi aproximada a ela para soarem iguais);
+  pronúncia não alterada (sem voz sintética).
 
 ## Pós-produção
 - **Transição viagem no tempo** (`scripts/timewarp.py`, 2 s): aceleração com push-in, rebobinar da parte 1
