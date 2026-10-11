@@ -80,3 +80,14 @@ def compose(rgb, sky, m, mood="day"):
     wrap = cv2.GaussianBlur(sky * m3, (0, 0), 10) * (1 - m3) * 0.18
     out = out + wrap
     return out
+
+
+def grade_natural(rgb):
+    """Brand cinematic look (as in Cena 2): gentle S-curve, lifted blacks, slight warm highlights / cool shadows, vignette-ready."""
+    f = rgb.astype(np.float32) / 255
+    lum = f.mean(axis=2, keepdims=True)
+    sh = np.clip(1 - lum * 2.2, 0, 1); hi = np.clip(lum * 2 - 1, 0, 1)
+    f += sh * np.array([-0.012, 0.0, 0.018]) + hi * np.array([0.03, 0.012, -0.025])
+    l2 = f.mean(axis=2, keepdims=True); f = l2 + (f - l2) * 1.08
+    f = np.clip(f, 0, 1); f = 0.03 + 0.92 * (f * f * (3 - 2 * f) * 0.45 + f * 0.55)
+    return np.clip(f * 255, 0, 255)

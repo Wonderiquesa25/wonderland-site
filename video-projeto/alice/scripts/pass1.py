@@ -4,7 +4,9 @@ A = sys.argv[1]; sys.path.insert(0, A)
 import wonder as WD
 from shots import SHOTS, HANDLE
 W, H, FPS = 1080, 1920, 30
-os.makedirs(f"{A}/shots", exist_ok=True)
+NAT = os.environ.get("NATURAL") == "1"
+SD = f"{A}/shots_nat" if NAT else f"{A}/shots"
+os.makedirs(SD, exist_ok=True)
 cv2.setNumThreads(1)
 
 
@@ -17,21 +19,24 @@ def ladder(kind):
 
 def render(k):
     oa, ob, sa, sb, sky, mood, tol, ymax, _ = SHOTS[k]
-    out = f"{A}/shots/shot_{k:02d}.mp4"
+    out = f"{SD}/shot_{k:02d}.mp4"
     if os.path.exists(out): return
     n_out = round((ob - oa + 2 * HANDLE) * FPS)
     enc = subprocess.Popen(["ffmpeg", "-y", "-v", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", "30", "-i", "-",
                             "-c:v", "libx264", "-crf", "11", "-preset", "fast", "-pix_fmt", "yuv420p", out], stdin=subprocess.PIPE)
     if isinstance(sa, str):                                      # still photo: slow push-in (and a tighter push for the wire shot)
-        base = ladder(sa); m, ref = WD.sky_mask(base, tol=tol, ymax=ymax)
+        base = ladder(sa); m, ref = (None, None) if NAT else WD.sky_mask(base, tol=tol, ymax=ymax)
         for i in range(n_out):
             t = i / FPS
             z = (1.0 + 0.10 * t / (n_out / FPS)) if sa == "ladder" else (1.45 + 0.25 * t / (n_out / FPS))
             cx, cy = (W * 0.50, H * 0.45) if sa == "ladder" else (W * 0.62, H * 0.30)
             M = np.float32([[z, 0, W / 2 - cx * z], [0, z, H / 2 - cy * z]])
             fr = cv2.warpAffine(base, M, (W, H), flags=cv2.INTER_LANCZOS4, borderMode=cv2.BORDER_REFLECT)
-            mm = cv2.warpAffine(m, M, (W, H))
-            o = WD.compose(fr, WD.place_sky(sky, t, (0, -t * 6)), mm, mood)
+            if NAT:
+                o = WD.grade_natural(fr)
+            else:
+                mm = cv2.warpAffine(m, M, (W, H))
+                o = WD.compose(fr, WD.place_sky(sky, t, (0, -t * 6)), mm, mood)
             enc.stdin.write(np.clip(o, 0, 255).astype(np.uint8).tobytes())
     else:
         speed = (sb - sa) / (ob - oa)
@@ -61,9 +66,12 @@ def render(k):
             st = (sa - HANDLE * speed - s0) + t * speed
             fi = st * FPS; i0 = int(np.clip(np.floor(fi), 0, len(frames) - 1)); i1 = min(i0 + 1, len(frames) - 1); a = fi - np.floor(fi)
             fr = frames[i0] if (speed > 0.95 or a < 0.15) else cv2.addWeighted(frames[i0], 1 - a, frames[i1], a, 0)
-            m, ref = WD.sky_mask(fr, m, ref, tol=tol, ymax=ymax)
-            sh = shifts[i0] * 0.6
-            o = WD.compose(fr, WD.place_sky(sky, t, (-sh[0], -sh[1])), m, mood)
+            if NAT:
+                o = WD.grade_natural(fr)
+            else:
+                m, ref = WD.sky_mask(fr, m, ref, tol=tol, ymax=ymax)
+                sh = shifts[i0] * 0.6
+                o = WD.compose(fr, WD.place_sky(sky, t, (-sh[0], -sh[1])), m, mood)
             enc.stdin.write(np.clip(o, 0, 255).astype(np.uint8).tobytes())
     enc.stdin.close(); enc.wait(); print("shot", k, "ok", flush=True)
 
