@@ -1,6 +1,8 @@
 # Kukulu Kua Mukambu — filme final
 
-**Versão actual: v6** — cena 1 narrada por voz TTS profissional (Piper `pt_BR-cadu-medium`, a mais grave das testadas, −1 semitom, cadeia quente sem eco), frase a frase no início de cada legenda (`tts_s1.py`). Mistura `mix_v6.py`. Ficheiro: `render/kukulu_v6_1080p.mp4`.
+**Versão actual: v7** — voz original do dono na cena 1 (limpa, sem efeitos; `voice_a4`), com a música suspense→drama e o corte do "É". Mistura `mix_v7.py`. Ficheiro: `render/kukulu_v7_1080p.mp4`.
+
+**v6** — cena 1 narrada por voz TTS profissional (Piper `pt_BR-cadu-medium`, a mais grave das testadas, −1 semitom, cadeia quente sem eco), frase a frase no início de cada legenda (`tts_s1.py`). Mistura `mix_v6.py`. Ficheiro: `render/kukulu_v6_1080p.mp4`.
 
 **v5** — v4 com a voz da cena 1 sem som metálico: só grossa e assustadora (`voice5.py`: −3 semitons, sub-voz uma oitava abaixo, saturação quente, topo escuro). Mistura `mix_v5.py`. Ficheiro: `render/kukulu_v5_1080p.mp4`.
 
