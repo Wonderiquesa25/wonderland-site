@@ -1,6 +1,8 @@
 # Kukulu Kua Mukambu — filme final
 
-**Versão actual: v5** — v4 com a voz da cena 1 sem som metálico: só grossa e assustadora (`voice5.py`: −3 semitons, sub-voz uma oitava abaixo, saturação quente, topo escuro). Mistura `mix_v5.py`. Ficheiro: `render/kukulu_v5_1080p.mp4`.
+**Versão actual: v6** — cena 1 narrada por voz TTS profissional (Piper `pt_BR-cadu-medium`, a mais grave das testadas, −1 semitom, cadeia quente sem eco), frase a frase no início de cada legenda (`tts_s1.py`). Mistura `mix_v6.py`. Ficheiro: `render/kukulu_v6_1080p.mp4`.
+
+**v5** — v4 com a voz da cena 1 sem som metálico: só grossa e assustadora (`voice5.py`: −3 semitons, sub-voz uma oitava abaixo, saturação quente, topo escuro). Mistura `mix_v5.py`. Ficheiro: `render/kukulu_v5_1080p.mp4`.
 
 **v4** — v3 + corte do "É" sem legenda antes de "Muitos dizem" (A2 32,03–32,43 s, `cut_e.py`) e voz da cena 1 assustadora (`voice4b.py`: −3 semitons, sub-voz uma oitava abaixo, rosnar leve, saturação, brilho metálico, sala escura curta; sincronia de lábios mantida). Música reajustada ao corte (`music_s1_v4.py`), mistura `mix_v4.py`. Ficheiro: `render/kukulu_v4_1080p.mp4`.
 
