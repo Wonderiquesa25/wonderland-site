@@ -20,3 +20,14 @@ Scripts: `scripts/pass1.py` (NATURAL=1), `scripts/pass2_nat.py`, `scripts/captio
   TECNOLOGIA CERTA, VOLTAGEM, ATERRAMENTO, INÚTIL, LIMITE, ELECTROCUTADO, 100% BLINDADO, ORGULHO ENORME, COMEÇAM).
   Duas palavras inaudíveis não foram legendadas (o "O que?" inicial da parte 3 e uma palavra depois de "inútil").
 - Sem 4K: o material vem do Canva em 1080×1920; exportar em 4K seria só ampliar.
+
+## Versão "pop" com as obras novas (atual: `video_kukulu_pop_1080p.mp4`)
+
+Construída sobre a versão anterior (mesmo ritmo, cortes, legendas da marca e voz), com:
+- **Obras novas do Canva** (projeto "outros trabalhos de cerca electrica", fotos em `obras-canva/`): moradia cinzenta em "residência",
+  fachada laranja em "empresa", técnico a instalar em "arames esticados da forma adequada", técnicos no muro em "equipa em ação",
+  e uma montra de obras concluídas em "Ver o resultado final…" — 4 obras em painéis estilo banda desenhada e grelha 2×2 com ✓ em "100% blindado".
+- **Grafismo original pop/BD** (`scripts/comic.py`): círculos, setas e sublinhados desenhados à mão sobre as cercas e a equipa,
+  sublinhados rabiscados nas palavras gigantes, linhas de velocidade, frames de impacto em "SUSTO", "LIMITE", "ELECTROCUTADO",
+  glitch curto em "choque", transição de pincelada laranja, estrelas nos painéis.
+- **Som:** voz + efeitos discretos (whoosh, impacto suave, marcador, pop) ~11 dB abaixo da voz, −14 LUFS (`scripts/sfx.py`).
