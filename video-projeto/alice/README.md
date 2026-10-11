@@ -31,3 +31,14 @@ Construída sobre a versão anterior (mesmo ritmo, cortes, legendas da marca e v
   sublinhados rabiscados nas palavras gigantes, linhas de velocidade, frames de impacto em "SUSTO", "LIMITE", "ELECTROCUTADO",
   glitch curto em "choque", transição de pincelada laranja, estrelas nos painéis.
 - **Som:** voz + efeitos discretos (whoosh, impacto suave, marcador, pop) ~11 dB abaixo da voz, −14 LUFS (`scripts/sfx.py`).
+
+## Versão HUD profissional (atual: `video_kukulu_hud_1080p.mp4`, 1:29,6) — substitui a versão "pop"
+
+- Cortado o "o que" solto antes de "Muitos dizem que é só…" (35,775–35,93 s); tudo o que vem depois avança 0,155 s em sincronia.
+- Rabiscos removidos. Grafismo HUD/cyber limpo (`scripts/hud.py`): mira que trava no alvo com linha de scan e etiqueta escrita
+  ("CERCA ELÉCTRICA", "INSTALAÇÃO", "EQUIPA KUKULU"), etiquetas "OBRA 01–04" na montra, grelha com mira e "CONCLUÍDO" em cada obra,
+  barra laranja sob as palavras gigantes com onda de choque e separação RGB, impacto cyber (RGB + scanlines) em SUSTO/LIMITE/ELECTROCUTADO,
+  glitch em "choque", transição em fatias; fundo da montra com grelha técnica.
+- Efeitos sonoros profissionais: biblioteca uisfx (licença MIT — temas cinematic e sci-fi: swipe, scanning, lock, typing, open, drop,
+  complete, error, warning) + graves sintetizados, ~11 dB abaixo da voz, −14 LUFS (`scripts/sfx2.py`).
+- Higgsfield não foi usado: não gera efeitos sonoros e não havia acabamento de imagem que justificasse gastar créditos.

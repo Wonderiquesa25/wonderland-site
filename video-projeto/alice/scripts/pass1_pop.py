@@ -44,7 +44,10 @@ def showcase(k):
     for y in range(0, H, 22):
         for x in range(0 + (11 if (y // 22) % 2 else 0), W, 22):
             cv2.circle(halftone, (x, y), 5, 1.0, -1, cv2.LINE_AA)
-    bg = np.full((H, W, 3), (14, 14, 14), np.float32) + halftone[..., None] * np.array([248, 168, 0]) * 0.22
+    yy, xx = np.mgrid[0:H, 0:W].astype(np.float32)
+    bg = np.full((H, W, 3), 10, np.float32) + (np.exp(-(((xx - W / 2) / 700) ** 2 + ((yy - H / 2) / 1100) ** 2)) * 26)[..., None]
+    gl = ((xx % 60 < 1.5) | (yy % 60 < 1.5)).astype(np.float32)
+    bg = bg + gl[..., None] * np.array([248, 168, 0], np.float32) * 0.10
     e = enc(f"{OUT}/shot_{k:02d}.mp4")
     for i in range(n):
         t = oa - HANDLE + i / FPS
@@ -92,7 +95,7 @@ def photo_shot(k):
 
 if __name__ == "__main__":
     from multiprocessing import Pool
-    jobs = list(PHOTO_SHOTS) + [24]
+    jobs = [24] if len(sys.argv) > 2 else list(PHOTO_SHOTS) + [24]
     with Pool(4) as pool:
         pool.map(lambda_ := (lambda k: showcase(k) if k == 24 else photo_shot(k)), jobs) if False else None
     for k in jobs:
