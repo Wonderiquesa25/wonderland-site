@@ -1,6 +1,8 @@
 # Kukulu Kua Mukambu — filme final
 
-**Versão actual: v2** (2:23, sem música) — `scripts/v2/`:
+**Versão actual: v3** — igual à v2 excepto o áudio da cena 1: voz estilo YouTuber (`voice3.py`: denoise+gate, corpo, harmónicos 4–9 kHz sintetizados, brilho metálico subtil, compressão forte) e música original suspense→drama (`music_s1.py`, Ré menor 90 BPM, desvanece dentro da transição CCTV), efeitos −22 dB sob a fala (`mix_v3.py`). Ficheiro: `render/kukulu_v3_1080p.mp4`.
+
+**v2** (2:23, sem música) — `scripts/v2/`:
 - Transição nova **central de monitorização CCTV** (`cctv.py`): a parte 1 vira o feed CAM 01, a câmara recua para a parede de
   monitores da Kukulu (CAM 03/04 = obras reais de cerca eléctrica), o cursor laranja selecciona CAM 02 e a câmara entra na cena 2.
   Desfoque de movimento real (8 sub-frames), som: REC, zumbido da sala, glitch, whoosh, clique, estática, ligação, impacto.
