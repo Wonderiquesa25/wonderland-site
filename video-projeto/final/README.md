@@ -1,6 +1,8 @@
 # Kukulu Kua Mukambu — filme final
 
-**Versão actual: v8** — voz original + música nova dramática e alegre na cena 1 (`music_s1_epic.py`: Ré maior 100 BPM, D–A–Bm–G, piano, cordas pulsantes, refrão épico aos 67,2 s). Mistura `mix_v8.py`. Ficheiro: `render/kukulu_v8_1080p.mp4`.
+**Versão FINAL para redes sociais: v7** (`render/kukulu_FINAL_v7_1080p.mp4`) — voz original, música suspense→drama, corte do "É". A v8 (música épica) foi descartada.
+
+**v8 (descartada)** — voz original + música nova dramática e alegre na cena 1 (`music_s1_epic.py`: Ré maior 100 BPM, D–A–Bm–G, piano, cordas pulsantes, refrão épico aos 67,2 s). Mistura `mix_v8.py`. Ficheiro: `render/kukulu_v8_1080p.mp4`.
 
 **v7** — voz original do dono na cena 1 (limpa, sem efeitos; `voice_a4`), com a música suspense→drama e o corte do "É". Mistura `mix_v7.py`. Ficheiro: `render/kukulu_v7_1080p.mp4`.
 
