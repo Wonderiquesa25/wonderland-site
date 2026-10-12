@@ -1,6 +1,9 @@
 # Reunião (vídeo WhatsApp de 09/10) — versão melhorada
 
-Final: `render/kukulu_reuniao_v2.mp4` (47,1 s, 1080×1920, −14 LUFS).
+**Final escolhido: `render/kukulu_reuniao_v3.mp4`** — montagem da 1.ª versão (`scripts/build_v1.py`) sobre imagem melhorada
+(`scripts/enhance.py`: limpeza de ruído, upscale 1080p, sombras levantadas, luz extra só na pele dos rostos, restauro CodeFormer estável).
+
+Alternativa sem efeitos do CapCut: `render/kukulu_reuniao_v2.mp4` (47,1 s, 1080×1920, −14 LUFS).
 
 Mantidos: as falas e a música originais (a música está na entrada do prédio). Melhorado no estilo do filme da equipa:
 - v2 (limpa): retirados os efeitos do CapCut — rebobinar P&B, flashes brancos, recorte P&B do Eric, desfoques de transição,
