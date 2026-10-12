@@ -1,6 +1,7 @@
 """Reunião (vídeo WhatsApp de 09/10) no estilo do filme da equipa.
 - Recorte 9:16 que esconde as legendas antigas do CapCut, cor igual ao filme da equipa.
 - Apresentações novas (cards.py): fala pára durante o cartão, nome digitado com som de teclado.
+- Efeitos do CapCut retirados (rebobinar, flashes, desfoques, desenhos animados); entrada em câmara lenta limpa.
 - Pausas encurtadas, punch-in alternado nos cortes, legendas animadas palavra a palavra.
 - Termina com o cartão do logótipo do filme da equipa.
 Uso: python3 build.py <scratch>/wa   (precisa de in.mp4, src1080.mp4, orig.wav, w2.json, intro/)"""
@@ -15,27 +16,33 @@ SFX = f"{S}/sfxlib/package/sounds"
 SR, FPS = 48000, 30
 os.makedirs(f"{W}/seg", exist_ok=True)
 
-# (tipo, ...)  src: a, b, zoom | card: nome, dur, áudio | still: frame, a, b | end
+# Cada bloco: (áudio, peças de imagem). O áudio corre contínuo a partir de a0 durante a soma das peças.
+# áudio: ("o", a0) original | ("card", nome, a0|None, máx) | ("end", a0)
+# peças: ("v", t, dur, zoom) vídeo limpo | ("slow", t, dur, factor) câmara lenta (60 fps) | ("s", frame, dur) imagem parada com zoom lento
+#        ("c", nome, dur) cartão | ("e", t, dur) cartão final do logótipo
+# Sem efeitos do CapCut: rebobinar, flashes, recorte P&B, desfoques e desenhos animados trocados por imagem real.
+SLOW = 1.86
 PLAN = [
-    ("src", 0.0, 6.9, 1.0),
-    ("card", "eric", 2.85, (6.9, 9.75)),
-    ("src2", 10.2, 9.75, 0.3),        # rebobinar sem o cartão antigo (imagem 10.2, som 9.75)
-    ("src", 10.5, 14.48, 1.0),
-    ("src", 14.68, 17.14, 1.08),
-    ("src", 17.34, 18.18, 1.0),
-    ("src", 18.62, 20.24, 1.08),
-    ("src", 20.48, 22.42, 1.0),
-    ("src", 22.62, 24.5, 1.08),
-    ("card", "joel", 2.3, None),
-    ("still", 24.8, 25.0, 27.25),
-    ("src", 27.25, 31.55, 1.0),
-    ("card", "alberto", 2.3, (31.85, 32.2)),
-    ("still", 34.3, 33.3, 34.0),
-    ("src", 34.0, 39.12, 1.0),
-    ("src", 39.42, 40.98, 1.08),
-    ("src", 41.22, 45.2, 1.0),
-    ("end", 62.57, 64.77),
+    (("o", 0.0), [("slow", 0.6, 0.85, SLOW), ("slow", 1.6, 0.35, SLOW),
+                  ("slow", 2.9, 1.5, SLOW), ("slow", 5.6, 0.85, SLOW), ("v", 6.6, 0.3, 1.0)]),
+    (("card", "eric", 6.9, 99), [("c", "eric", 2.85)]),
+    (("o", 10.5), [("s", 11.4, 0.8), ("v", 11.3, 3.18, 1.0)]),
+    (("o", 14.68), [("v", 14.68, 2.46, 1.06)]),
+    (("o", 17.34), [("v", 17.34, 0.84, 1.0)]),
+    (("o", 18.62), [("v", 18.62, 1.62, 1.06)]),
+    (("o", 20.48), [("v", 20.48, 1.94, 1.0)]),
+    (("o", 22.62), [("v", 22.62, 0.16, 1.06), ("s", 22.7, 0.62), ("v", 23.4, 1.05, 1.0)]),
+    (("card", "joel", None, 0), [("c", "joel", 2.3)]),
+    (("o", 25.0), [("s", 24.8, 2.55), ("v", 27.55, 1.7, 1.0), ("v", 29.4, 0.55, 1.0), ("s", 29.7, 1.75)]),
+    (("card", "alberto", 31.85, 0.35), [("c", "alberto", 2.3)]),
+    (("o", 33.3), [("s", 34.3, 0.95), ("v", 34.25, 4.87, 1.0)]),
+    (("o", 39.42), [("v", 39.42, 1.56, 1.06)]),
+    (("o", 41.22), [("v", 41.22, 1.98, 1.0), ("s", 43.0, 2.0)]),
+    (("end", 62.57), [("e", 62.57, 2.2)]),
 ]
+LOOK = ("crop=366:650:49:0,scale=1080:1920:flags=lanczos,unsharp=5:5:0.6,eq=gamma=0.97:contrast=1.04,"
+        "curves=all='0/0.03 0.25/0.22 0.5/0.5 0.78/0.81 1/0.95',"
+        "colorbalance=rs=-0.01:bs=0.015:rh=0.02:gh=0.005:bh=-0.02,vignette=angle=PI/7")
 
 
 def run(*a):
@@ -56,51 +63,54 @@ def zoom(z):
     return f"crop=iw/{z}:ih/{z}:(iw-iw/{z})/2:(ih-ih/{z})*0.4,scale=1080:1920:flags=lanczos,setsar=1"
 
 
+def piece(pc, out):
+    k = pc[0]
+    if k == "v":
+        _, t, d, z = pc; n = round(d * FPS)
+        run("-ss", str(t), "-i", f"{W}/src1080.mp4", "-frames:v", str(n), "-vf", zoom(z), *ENC, out)
+    elif k == "slow":
+        _, t, d, f = pc; n = round(d * f * FPS)
+        run("-ss", str(t), "-t", str(d + 0.1), "-i", f"{W}/in.mp4", "-an", "-frames:v", str(n),
+            "-vf", f"setpts={f}*(PTS-STARTPTS),fps={FPS},{LOOK},setsar=1", *ENC, out)
+    elif k == "s":
+        _, t, d = pc; n = round(d * FPS)
+        run("-ss", str(t), "-i", f"{W}/src1080.mp4", "-frames:v", "1", out + ".png")
+        run("-loop", "1", "-i", out + ".png", "-frames:v", str(n),
+            "-vf", f"scale=2160:3840,zoompan=z='1.0+0.04*on/{n}':x='iw/2-(iw/zoom/2)':y='(ih-ih/zoom)*0.4':d={n}:s=1080x1920:fps={FPS},setsar=1",
+            *ENC, out)
+    elif k == "c":
+        _, name, d = pc; n = round(d * FPS)
+        run("-i", f"{W}/intro/{name}.mp4", "-frames:v", str(n), "-vf", "setsar=1", *ENC, out)
+    else:
+        _, t, d = pc; n = round(d * FPS)
+        run("-ss", str(t), "-i", END, "-frames:v", str(n), "-vf", "scale=1080:1920,setsar=1", *ENC, out)
+    return n
+
+
 vids, auds, smap, cards = [], [], [], []
 T = 0.0
-for i, p in enumerate(PLAN):
-    out = f"{W}/seg/{i:02d}.mp4"
-    k = p[0]
-    if k == "src":
-        _, a, b, z = p
-        n = round((b - a) * FPS); d = n / FPS
-        run("-ss", str(a), "-i", f"{W}/src1080.mp4", "-frames:v", str(n), "-vf", zoom(z), *ENC, out)
-        aud = ORIG[int(a * SR): int(a * SR) + int(d * SR)]
-        smap.append((a, a + d, T))
-    elif k == "src2":
-        _, v0, a0, d = p
-        n = round(d * FPS); d = n / FPS
-        run("-ss", str(v0), "-i", f"{W}/src1080.mp4", "-frames:v", str(n), "-vf", zoom(1.0), *ENC, out)
-        aud = ORIG[int(a0 * SR): int(a0 * SR) + int(d * SR)]
-    elif k == "card":
-        _, name, d, ar = p
-        n = round(d * FPS); d = n / FPS
-        run("-i", f"{W}/intro/{name}.mp4", "-frames:v", str(n), "-vf", "setsar=1", *ENC, out)
-        aud = np.zeros((int(d * SR), 2))
-        if ar:
-            x = ORIG[int(ar[0] * SR): int(ar[1] * SR)]
-            aud[: len(x)] = x[: len(aud)]
+for i, (au, pieces) in enumerate(PLAN):
+    n = 0
+    for j, pc in enumerate(pieces):
+        out = f"{W}/seg/{i:02d}_{j}.mp4"
+        n += piece(pc, out); vids.append(out)
+    d = n / FPS; L = int(round(d * SR))
+    if au[0] == "o":
+        a0 = au[1]; aud = ORIG[int(a0 * SR): int(a0 * SR) + L]
+        smap.append((a0, a0 + d, T))
+    elif au[0] == "card":
+        _, name, a0, mx = au
+        aud = np.zeros((L, 2))
+        if a0 is not None:
+            x = ORIG[int(a0 * SR): int(a0 * SR) + int(min(mx, d) * SR)]
+            aud[: len(x)] = x
         cards.append((name, T))
-    elif k == "still":
-        _, ft, a, b = p
-        n = round((b - a) * FPS); d = n / FPS
-        run("-ss", str(ft), "-i", f"{W}/src1080.mp4", "-frames:v", "1", f"{W}/seg/still{i}.png")
-        run("-loop", "1", "-i", f"{W}/seg/still{i}.png", "-frames:v", str(n),
-            "-vf", f"scale=2160:3840,zoompan=z='1.0+0.05*on/{n}':x='iw/2-(iw/zoom/2)':y='(ih-ih/zoom)*0.4':d={n}:s=1080x1920:fps={FPS},setsar=1",
-            *ENC, out)
-        aud = ORIG[int(a * SR): int(a * SR) + int(d * SR)]
-        smap.append((a, a + d, T))
     else:
-        _, a, b = p
-        n = round((b - a) * FPS); d = n / FPS
-        run("-ss", str(a), "-i", END, "-frames:v", str(n), "-vf", "scale=1080:1920,setsar=1", *ENC, out)
-        aud = load(END, a, d)
-        aud = np.pad(aud, ((0, max(0, int(d * SR) - len(aud))), (0, 0)))[: int(d * SR)]
+        aud = load(END, au[1], d)
         aud = aud / (np.abs(aud).max() + 1e-9) * 0.35          # nivelado mais abaixo
-    aud = aud.copy(); f = int(0.012 * SR)
-    if len(aud) > 2 * f:
-        aud[:f] *= np.linspace(0, 1, f)[:, None]; aud[-f:] *= np.linspace(1, 0, f)[:, None]
-    vids.append(out); auds.append(aud)
+    aud = np.pad(aud, ((0, max(0, L - len(aud))), (0, 0)))[:L].copy(); f = int(0.012 * SR)
+    aud[:f] *= np.linspace(0, 1, f)[:, None]; aud[-f:] *= np.linspace(1, 0, f)[:, None]
+    auds.append(aud)
     T += d
 TOTAL = T
 
@@ -242,5 +252,5 @@ run("-f", "concat", "-safe", "0", "-i", f"{W}/seg/list.txt", "-c", "copy", f"{W}
 run("-i", f"{W}/pic.mp4", "-i", f"{W}/mix.wav",
     "-vf", f"subtitles={W}/subs.ass:fontsdir={REPO}/fonts,noise=alls=3:allf=t,format=yuv420p",
     "-map", "0:v", "-map", "1:a", "-c:v", "libx264", "-b:v", "6M", "-maxrate", "8M", "-bufsize", "12M", "-preset", "slow",
-    "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-shortest", f"{REPO}/render/kukulu_reuniao_v1.mp4")
+    "-c:a", "aac", "-b:a", "192k", "-movflags", "+faststart", "-shortest", f"{REPO}/render/kukulu_reuniao_v2.mp4")
 print("total", round(TOTAL, 2), "s ·", len(ev), "legendas")
