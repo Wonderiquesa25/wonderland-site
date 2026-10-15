@@ -5,11 +5,17 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '../../podcast/scripts'))
 from puppet import Puppet, K
 P = os.environ.get('POD', '../pod/')
-VOZ = os.environ.get('VOZ', 'voz.wav'); WORDS = os.environ.get('WORDS', 'voz_w.json'); ORI = os.environ.get('ORI', 'ori')
+VOZ = os.environ.get('VOZ', 'voz2.wav'); WORDS = os.environ.get('WORDS', 'voz2_w.json'); ORI = os.environ.get('ORI', 'ori')
 FONT = P + 'Montserrat-ExtraBold.ttf'; SERIF = '/usr/share/fonts/truetype/liberation/LiberationSerif-Bold.ttf'
 SERIF_I = '/usr/share/fonts/truetype/liberation/LiberationSerif-BoldItalic.ttf'
-OUT = os.environ.get('OUT', 'crime_mudo.mp4')
-W, H, FPS = 1920, 1080, 30
+V = os.environ.get('ORIENT', 'h') == 'v'                       # v = 9:16 (TikTok)
+OUT = os.environ.get('OUT', 'crime_mudo_v.mp4' if V else 'crime_mudo.mp4')
+W, H, FPS = (1080, 1920, 30) if V else (1920, 1080, 30)
+GRID = json.load(open(os.environ.get('GRID', 'grid.json'))); TQ, BEAT = GRID['T'], GRID['beat']
+def snap(t):
+    """encaixa um instante na grelha da musica: batida se estiver perto, senao tercina"""
+    b = round(t / BEAT) * BEAT
+    return b if abs(b - t) <= 0.26 else round(t / TQ) * TQ
 ORANGE = (248, 168, 0); WHITE = (255, 255, 255)
 def clamp(x, a=0.0, b=1.0): return min(max(x, a), b)
 def ease(x): x = clamp(x); return 1 - (1 - x) ** 3
@@ -56,7 +62,8 @@ EMPH = {'madrugada', '22', 'abril', '2025', 'família', 'assaltantes', 'armados'
         'câmaras', 'videovigilância', 'cerca', 'eléctrica', 'alarme', 'atacar', 'primeiro', 'defesa', 'ataque',
         'antecipado', 'duas', 'vezes', 'melhor'}
 def is_emph(w): return w.lower().strip('.,?!') in EMPH
-FS = 150; fnt = ImageFont.truetype(FONT, FS); MAXW = 800
+FS, MAXW = (122, 900) if V else (150, 800)
+fnt = ImageFont.truetype(FONT, FS)
 def lines_of(ws):
     L = [[]]; lw = 0
     for w in ws:
@@ -87,7 +94,7 @@ def find(word, after=0.0):
         if s >= after and w.lower().strip('.,?!') == word: return s
     raise KeyError(word)
 
-def caption_rgba(t, size_w, size_h, x0, y0, fs_scale=1.0):
+def caption_rgba(t, size_w, size_h, x0, y0, fs_scale=1.0, center=False):
     for st, en_, c in CH:
         if st <= t < en_: break
     else: return None
@@ -105,7 +112,7 @@ def caption_rgba(t, size_w, size_h, x0, y0, fs_scale=1.0):
     lh = int(fsz * 1.08); ti = 0; cursor = None
     ytop = y0 - (len(L) * lh) // 2
     for li, ln in enumerate(L):
-        x = x0; y = ytop + li * lh
+        x = x0 - f.getlength(' '.join(ln).upper()) / 2 if center else x0; y = ytop + li * lh
         for w in ln:
             W_, n, em = toks[ti]; ti += 1
             if n > 0:
@@ -129,7 +136,7 @@ def podcast(t, cx, cy, ww):
     ang = 0.9 * np.sin(2 * np.pi * t / 4.1) + 0.9 * en * np.sin(2 * np.pi * t / 1.5)
     hdy = 1.6 * en * np.sin(2 * np.pi * t / 1.0)
     img = pup.frame(jaw, blink_at(t), ang, 0, hdy)
-    cap = caption_rgba(t, IW * K, IH * K, CAP_X0, CAP_Y)
+    cap = None if V else caption_rgba(t, IW * K, IH * K, CAP_X0, CAP_Y)   # 16:9: legenda na parede, atras do microfone
     if cap is not None:
         al = cap[..., 3:] / 255 * (1 - fg)
         sh = np.roll(cv2.GaussianBlur(cap[..., 3], (0, 0), 9)[..., None] / 255 * 0.65, (10, 12), (0, 1)) * (1 - fg)
@@ -144,6 +151,14 @@ def podcast(t, cx, cy, ww):
     mx = (mx + camx * (d - 0.5) * 1.6).astype(np.float32); my = (my + camy * (d - 0.5) * 1.6).astype(np.float32)
     out = cv2.remap(img, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
     if s < 1.05: bl = cv2.GaussianBlur(out, (0, 0), 1.3); out = out * 1.4 - bl * 0.4
+    return screen_caption(out, t) if V else out
+
+def screen_caption(out, t):
+    cap = caption_rgba(t, W, H, W / 2, 1220, 1.0, center=True) if V else caption_rgba(t, W, H, 1010, 300, 0.92)
+    if cap is not None:
+        al = cap[..., 3:] / 255
+        sh = np.roll(cv2.GaussianBlur(cap[..., 3], (0, 0), 12)[..., None] / 255 * 0.85, (8, 8), (0, 1))
+        out = out * (1 - sh); out = out * (1 - al) + cap[..., :3][..., ::-1] * al
     return out
 
 # ---------- cenas origami com camara 3D (keyframes de zoom/pan + paralaxe por profundidade) ----------
@@ -153,18 +168,17 @@ def origami(i, t, t0, t1, mo):
     z0, z1, px0, py0, px1, py1 = mo
     u = eio((t - t0) / max(t1 - t0, 0.1))
     z = z0 + (z1 - z0) * u; px = px0 + (px1 - px0) * u; py = py0 + (py1 - py0) * u
-    s = 1 / z
-    mx = (W / 2 + px + (gu - W / 2) * s).astype(np.float32); my = (H / 2 + py + (gv - H / 2) * s).astype(np.float32)
+    if V:  # 9:16: a imagem preenche a altura; o pan percorre a cena na horizontal
+        s = (1080 / 1920) / z
+        px = float(np.clip(px * 2.2, -(960 - 304 / z), 960 - 304 / z)); cx_, cy_ = 960 + px, 540 + py
+    else:
+        s = 1 / z; cx_, cy_ = W / 2 + px, H / 2 + py
+    mx = (cx_ + (gu - W / 2) * s).astype(np.float32); my = (cy_ + (gv - H / 2) * s).astype(np.float32)
     d = cv2.remap(d0, mx, my, cv2.INTER_LINEAR)
     orb = 30 * np.sin(np.pi * u - np.pi / 2)
     mx = (mx + orb * (d - 0.5) * 1.6).astype(np.float32); my = (my - 0.3 * orb * (d - 0.5)).astype(np.float32)
     out = cv2.remap(img, mx, my, cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
-    cap = caption_rgba(t, W, H, 1010, 300, 0.92)
-    if cap is not None:
-        al = cap[..., 3:] / 255
-        sh = np.roll(cv2.GaussianBlur(cap[..., 3], (0, 0), 12)[..., None] / 255 * 0.85, (8, 8), (0, 1))
-        out = out * (1 - sh); out = out * (1 - al) + cap[..., :3][..., ::-1] * al
-    return out
+    return screen_caption(out, t)
 
 # ---------- recortes de jornal ----------
 fh = lambda s: ImageFont.truetype(SERIF, s); fi = lambda s: ImageFont.truetype(SERIF_I, s)
@@ -252,7 +266,10 @@ def blit(cv, rgba, cx, cy, scale, rot, opac):
 
 # ---------- linha de tempo ----------
 def mo(z0, z1, px0=0, py0=0, px1=0, py1=0): return (z0, z1, px0, py0, px1, py1)
-WIDE, MED, CLOSE = (620, 395, 1200, 1100), (765, 300, 900, 830), (815, 262, 760, 700)
+if V:   # janelas verticais (largura em px da cena 1200x896; altura = largura*16/9)
+    WIDE, MED, CLOSE = (610, 448, 504, 470), (600, 400, 430, 400), (585, 330, 340, 315)
+else:
+    WIDE, MED, CLOSE = (620, 395, 1200, 1100), (765, 300, 900, 830), (815, 262, 760, 700)
 t_pense = find('pense'); t_lugar = find('lugar'); t_e = find('e', t_lugar); t_torna = find('torna-se')
 t_se = find('se', t_torna); t_fechar = find('fechar'); t_inv = find('investigação'); t_aut = find('autoridades')
 t_mas = find('mas', t_aut); t_nao = find('não'); t_prev = find('prevenção'); t_inst = find('instale')
@@ -289,6 +306,9 @@ TL = [('o', 0.0, 6, mo(1.0, 1.18, 0, 0, 40, 10)),
       ('p', t_ou) + MED,
       ('o', t_mas2, 14, mo(1.2, 1.0, 0, 0, 0, 0))]
 TL.sort(key=lambda s: s[1])
+# cortes no ritmo da musica (batida, ou tercina se a batida ficar longe da palavra)
+TL = [TL[0]] + [(s[0], snap(s[1])) + s[2:] for s in TL[1:]]
+TL = [s for k, s in enumerate(TL) if k + 1 >= len(TL) or TL[k + 1][1] - s[1] >= 0.3]
 CUTS = [s[1] for s in TL[1:]]
 def seg_at(t):
     j = max(i for i, s in enumerate(TL) if s[1] <= t)
@@ -301,20 +321,22 @@ def shot(t):
     return origami(s[2], t, s[1], e, s[3])
 
 # recortes: (entrada, saida, rgba, cx, cy, rot, escala)
-NEWS_END = t_pense
+def on_beat(t0): return snap(t0 + 0.24) - 0.24          # o impacto do recorte cai na batida
+CX, CY = (540, 600) if V else (470, 560)
 CLIPS = [
-    (0.30, find('família') - 0.05, make_clip('Madrugada de 22 de Abril de 2025', 'Família surpreendida por assaltantes armados',
-     'Dentro da própria residência', None, ORIG[1][0], 1), 470, 560, -4, 0.95),
-    (find('kilamba') - 0.15, find('segundo') - 0.05, stamp('KILAMBA KIAXI • LUANDA', 2), 520, 760, -8, 1.0),
-    (find('segundo') + 0.15, find('10') + 1.4, make_clip('24 de Abril', 'Dez indivíduos terão invadido a casa', None,
-     'Segundo notícia do Correio da Kianda', ORIG[3][0], 3), 480, 560, 3, 0.92),
-    (find('o', 16.5) + 0.1, find('foi', find('anos')) - 0.05, make_clip('Vítima', 'Antigo director-geral do INAVIC morto a tiro',
-     'Carlos Manuel David, 67 anos', None, ORIG[4][0], 4), 470, 560, -3, 0.92),
-    (find('esposa') - 0.05, t_pense - 0.05, make_clip('Família baleada', 'Esposa e os dois filhos também foram baleados',
-     None, None, ORIG[5][0], 5), 480, 580, 4, 0.92)]
-# no quadro da investigacao: os recortes voam em sucessao rapida para o quadro de cortica
-BOARD = [(t_inv + 0.15 + 0.16 * k, t_aut - 0.05, CLIPS[ci][2], x, y, r_, 0.36)
-         for k, (ci, (x, y, r_)) in enumerate(zip([0, 2, 3, 4], [(260, 330, -8), (590, 280, 6), (340, 680, -3), (680, 640, 9)]))]
+    (max(on_beat(0.30), 0.06), find('família') - 0.05, make_clip('Madrugada de 22 de Abril de 2025', 'Família surpreendida por assaltantes armados',
+     'Dentro da própria residência', None, ORIG[1][0], 1), CX, CY, -4, 0.95),
+    (on_beat(find('kilamba') - 0.15), find('segundo') - 0.05, stamp('KILAMBA KIAXI • LUANDA', 2), *((540, 860) if V else (520, 760)), -8, 1.0),
+    (on_beat(find('segundo') + 0.15), find('10') + 1.4, make_clip('24 de Abril', 'Dez indivíduos terão invadido a casa', None,
+     'Segundo notícia do Correio da Kianda', ORIG[3][0], 3), CX + 10, CY, 3, 0.92),
+    (on_beat(find('o', 16.5) + 0.1), find('foi', find('anos')) - 0.05, make_clip('Vítima', 'Antigo director-geral do INAVIC morto a tiro',
+     'Carlos Manuel David, 67 anos', None, ORIG[4][0], 4), CX, CY, -3, 0.92),
+    (on_beat(find('esposa') - 0.05), t_pense - 0.05, make_clip('Família baleada', 'Esposa e os dois filhos também foram baleados',
+     None, None, ORIG[5][0], 5), CX + 10, CY + 20, 4, 0.92)]
+# no quadro da investigacao: os recortes voam em sucessao rapida (uma tercina cada) para o quadro de cortica
+BPOS = [(300, 520, -8), (780, 470, 6), (330, 900, -3), (760, 860, 9)] if V else [(260, 330, -8), (590, 280, 6), (340, 680, -3), (680, 640, 9)]
+BOARD = [(on_beat(t_inv) + TQ * (k + 1), t_aut - 0.05, CLIPS[ci][2], x, y, r_, 0.42 if V else 0.36)
+         for k, (ci, (x, y, r_)) in enumerate(zip([0, 2, 3, 4], BPOS))]
 ALLCLIPS = CLIPS + BOARD
 IMPACTS = [c[0] + 0.24 for c in ALLCLIPS]
 
@@ -343,19 +365,21 @@ def put(cv, rgba, x, y, op=1.0):
 fnt_e = ImageFont.truetype(FONT, 96); fnt_n = ImageFont.truetype(FONT, 72); fnt_s = ImageFont.truetype(FONT, 32)
 def endcard(t):
     cv = np.zeros((H, W, 3), np.float32); cv[:] = (14, 12, 12); u = t - VEND
-    k = ease(u / 0.4); lg = cv2.resize(logo, (int(760 * (0.85 + 0.15 * k)), int(760 * (0.85 + 0.15 * k) * logo.shape[0] / logo.shape[1])))
-    put(cv, lg, 480 - lg.shape[1] // 2, 540 - lg.shape[0] // 2, k)
+    lw = 640 if V else 760; lcx, lcy = (540, 560) if V else (480, 540)
+    k = ease(u / 0.4); lg = cv2.resize(logo, (int(lw * (0.85 + 0.15 * k)), int(lw * (0.85 + 0.15 * k) * logo.shape[0] / logo.shape[1])))
+    put(cv, lg, lcx - lg.shape[1] // 2, lcy - lg.shape[0] // 2, k)
     im = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+    tx, ty = (110, 900) if V else (960, 300)                      # bloco de texto (vertical: por baixo do logotipo)
     l1, l2 = 'A PREVENÇÃO', 'COMEÇA ANTES.'
     n1 = int(clamp((u - 0.3) / 0.6) * len(l1)); n2 = int(clamp((u - 0.95) / 0.45) * len(l2))
-    d.text((960, 300), l1[:n1], font=fnt_e, fill=WHITE); d.text((960, 410), l2[:n2], font=fnt_e, fill=ORANGE)
+    d.text((tx, ty), l1[:n1], font=fnt_e, fill=WHITE); d.text((tx, ty + 110), l2[:n2], font=fnt_e, fill=ORANGE)
     if u > 1.5:
-        kk = ease((u - 1.5) / 0.3); pw = int(820 * kk)
-        d.rounded_rectangle([960, 600, 960 + pw, 730], radius=65, fill=(37, 211, 102, 255))
+        kk = ease((u - 1.5) / 0.3); pw = int(820 * kk); by = ty + 300
+        d.rounded_rectangle([tx, by, tx + pw, by + 130], radius=65, fill=(37, 211, 102, 255))
         num = '+244 921 112 654'; nn = int(clamp((u - 1.7) / 0.7) * len(num))
-        d.text((1000, 622), num[:nn], font=fnt_n, fill=WHITE)
-        d.text((975, 555), 'WHATSAPP / LIGUE', font=fnt_s, fill=(37, 211, 102))
-        d.text((960, 770), 'Câmaras  •  Cerca eléctrica  •  Alarmes', font=fnt_s, fill=(200, 200, 200))
+        d.text((tx + 40, by + 22), num[:nn], font=fnt_n, fill=WHITE)
+        d.text((tx + 15, by - 45), 'WHATSAPP / LIGUE', font=fnt_s, fill=(37, 211, 102))
+        d.text((tx, by + 170), 'Câmaras  •  Cerca eléctrica  •  Alarmes', font=fnt_s, fill=(200, 200, 200))
     arr = np.array(im).astype(np.float32); arr[..., :3] = arr[..., :3][..., ::-1]
     put(cv, arr, 0, 0)
     return cv
@@ -371,7 +395,7 @@ def finish(img, t):
     cool = np.float32([1.10, 0.97, 0.86]); warm = np.float32([0.94, 1.0, 1.06])
     img = img * (cool * (1 - w) + warm * w)
     if t < t_se + 0.3 and seg_at(t)[1][0] == 'o':               # luzes de sirene nas cenas de crime
-        ph = (t * 2.2) % 1.0; pulse = (np.sin(t * 2 * np.pi * 2.2) * 0.5 + 0.5) ** 2
+        ph = (t / BEAT) % 1.0; pulse = (np.cos(2 * np.pi * t / (BEAT / 2)) * 0.5 + 0.5) ** 2   # pisca no ritmo
         red = np.float32([30, 30, 255]); blue = np.float32([255, 90, 30])
         img = img + (LEFT * (red if ph < 0.5 else blue) + RIGHT * (blue if ph < 0.5 else red)) * 0.22 * pulse
     o = np.clip(img / 255, 0, 1)
@@ -401,12 +425,13 @@ def frame(t):
     return img
 
 if __name__ == '__main__':
-    json.dump({'keys': sorted(KEYS), 'cuts': CUTS, 'impacts': IMPACTS, 'vend': VEND, 'dur': DUR,
+    json.dump({'keys': sorted(KEYS), 'cuts': CUTS, 'impacts': IMPACTS, 'vend': VEND, 'dur': DUR, 'words': words,
+               'beat': BEAT, 'T': TQ, 't_nao': t_nao,
                'endkeys': [VEND + 0.3 + 0.05 * i for i in range(11)] + [VEND + 0.95 + 0.04 * i for i in range(13)] + [VEND + 1.7 + 0.044 * i for i in range(16)]},
               open('crime_events.json', 'w'))
     if len(sys.argv) > 1:
         for ts in sys.argv[1:]:
-            cv2.imwrite(f'cr_{ts}.jpg', np.clip(frame(float(ts)), 0, 255).astype(np.uint8))
+            cv2.imwrite(f'cr{"v" if V else "h"}_{ts}.jpg', np.clip(frame(float(ts)), 0, 255).astype(np.uint8))
         sys.exit()
     p = subprocess.Popen(['ffmpeg', '-y', '-loglevel', 'error', '-f', 'rawvideo', '-pix_fmt', 'bgr24', '-s', f'{W}x{H}', '-r', str(FPS),
                           '-i', '-', '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-pix_fmt', 'yuv420p', OUT], stdin=subprocess.PIPE)
