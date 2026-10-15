@@ -181,6 +181,7 @@ def podcast(t, yc, w0, w1, u):
     return cv2.warpAffine(cv, M, (W, H), flags=cv2.INTER_LINEAR, borderMode=cv2.BORDER_REFLECT)
 
 # ---------- origami ----------
+gu, gv = np.meshgrid(np.arange(W, dtype=np.float32), np.arange(H, dtype=np.float32))
 ORIG = {i: (cv2.imread(f'{ORI}/o{i}.jpg').astype(np.float32), np.load(f'{ORI}/d{i}.npy').astype(np.float32)) for i in range(1, 11)}
 def origami(i, t, t0, t1, motion):
     img, d0 = ORIG[i]
