@@ -49,7 +49,7 @@ EMPH = {'imagina', 'meia', 'noite', 'barulhos', 'esposa', 'filhos', 'estranhas',
         'cerca', 'eléctrica', 'segurança', 'amas', 'ama', 'certeza', 'absoluta', 'prevenirias', 'mata', 'tempo',
         'residência', 'casa', 'bárbaro', 'importante'}
 def is_emph(w): return w.lower().strip('.,?!') in EMPH
-FS = 150; fnt = ImageFont.truetype(FONT, FS); MAXW = 860
+FS = 150; fnt = ImageFont.truetype(FONT, FS); MAXW = 800
 def lines_of(ws):
     L = [[]]; lw = 0
     for w in ws:
@@ -163,7 +163,7 @@ def origami(i, t, t0, t1, motion):
 
 # ---------- linha de tempo ----------
 # ('p', inicio, cx, cy, largura0, largura1) | ('o', inicio, imagem, (zoom0, zoom1, pan x, pan y))
-WIDE, MED, CLOSE = (620, 395, 1200, 1100), (700, 300, 900, 820), (760, 262, 760, 690)
+WIDE, MED, CLOSE = (620, 395, 1200, 1100), (765, 300, 900, 830), (815, 262, 760, 700)
 TL = [('p', 0.0) + WIDE, ('o', 1.25, 1, (1.0, 1.12, 60, 0)), ('o', 3.74, 2, (1.08, 1.0, -80, 0)),
       ('o', 5.56, 3, (1.0, 1.1, 0, -40)), ('o', 7.88, 4, (1.12, 1.0, 100, 0)),
       ('p', 10.7) + MED, ('p', 13.34) + CLOSE, ('p', 16.54) + WIDE, ('p', 18.6) + MED,

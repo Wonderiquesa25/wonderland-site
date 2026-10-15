@@ -2,7 +2,7 @@
 import os, json, subprocess, numpy as np, soundfile as sf
 SR = 48000
 VOZ = os.environ.get('VOZ', 'ac48.wav'); SFX = os.environ.get('SFX', 'sfxlib/package/sounds')
-EV = json.load(open('pod2_events.json')); VID = os.environ.get('VID', 'pod2_mudo.mp4'); OUT = os.environ.get('OUT', 'pod2_final.mp4')
+EV = json.load(open(os.environ.get('EVENTS', 'pod2_events.json'))); VID = os.environ.get('VID', 'pod2_mudo.mp4'); OUT = os.environ.get('OUT', 'pod2_final.mp4')
 N = int(EV['dur'] * SR)
 def load(p):
     a, sr = sf.read(p, dtype='float32', always_2d=True)
